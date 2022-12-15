@@ -5,9 +5,9 @@
 // SO THAT I can organize my thoughts and keep track of tasks I need to complete
 //
 // GIVEN a note-taking application:
-// - [ ] WHEN I open the Note Taker
+// - [x] WHEN I open the Note Taker
 //       THEN I am presented with a landing page with a link to a notes page
-// - [ ] WHEN I click on the link to the notes page
+// - [x] WHEN I click on the link to the notes page
 //       THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
 // - [ ] WHEN I enter a new note title and the note’s text
 //       THEN a Save icon appears in the navigation at the top of the page
@@ -36,39 +36,44 @@ const express = require("express")
 const path = require("path")
 const fs = require("fs")
 
-// Declare app and port.
+// Declare app and its port.
 const app = express()
 const PORT = 3333
 
 // Import db.json.
 const db = require("./db/db.json")
 
-// Decalre middleware to parse JSON
+// Use this middleware to parse JSON.
 app.use(express.json())
 
-// Declare GET * HTML route (returns index.html).
+// Use this middleware to serve all static files in the public/ folder.
+app.use(express.static("public"))
+
+// GET / HTML route (returns index.html).
 app.get("/", (req, res) => {
-  // code
+  res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
-// Declare GET /notes HTML route (returns notes.html).
+// GET /notes HTML route (returns notes.html).
 app.get("/notes", (req, res) => {
-  // code
+  res.sendFile(path.join(__dirname, "/public/notes.html"))
 })
 
-// Declare GET /api/notes API route.
+// GET /api/notes API route (returns notes from db.json).
 app.get("/api/notes", (req, res) => {
   res.json(db)
 })
 
 // Declare POST /api/notes API route.
 app.post("/api/notes", (req, res) => {
-  // code
+  console.log(req.body) // **
+  res.end()
 })
 
 // BONUS: Declare DELETE /api/notes/:id API route.
-app.post("/api/notes/:id", (req, res) => {
-  // code
+app.delete("/api/notes/:id", (req, res) => {
+  console.log("DELETE /api/notes/:id API route") // **
+  res.end()
 })
 
 // Listen at the specified port.
