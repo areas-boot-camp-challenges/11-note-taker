@@ -9,7 +9,7 @@
 //       THEN I am presented with a landing page with a link to a notes page
 // - [x] WHEN I click on the link to the notes page
 //       THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
-// - [ ] WHEN I enter a new note title and the note’s text
+// - [x] WHEN I enter a new note title and the note’s text
 //       THEN a Save icon appears in the navigation at the top of the page
 // - [ ] WHEN I click on the Save icon
 //       THEN the new note I have entered is saved and appears in the left-hand column with the other existing notes
@@ -38,10 +38,11 @@ const fs = require("fs")
 
 // Declare app and its port.
 const app = express()
-const PORT = 3333
+const PORT = process.env.PORT || 3333
 
 // Import db.json.
 const db = require("./db/db.json")
+const { json } = require("express/lib/response")
 
 // Use this middleware to parse JSON.
 app.use(express.json())
@@ -49,34 +50,51 @@ app.use(express.json())
 // Use this middleware to serve all static files in the public/ folder.
 app.use(express.static("public"))
 
+
 // GET / HTML route (returns index.html).
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/index.html"))
+app.get("/", (request, response) => {
+  response.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
 // GET /notes HTML route (returns notes.html).
-app.get("/notes", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/notes.html"))
+app.get("/notes", (request, response) => {
+  response.sendFile(path.join(__dirname, "/public/notes.html"))
 })
 
+
 // GET /api/notes API route (returns notes from db.json).
-app.get("/api/notes", (req, res) => {
-  res.json(db)
+app.get("/api/notes", (request, response) => {
+  response.json(db)
 })
 
 // Declare POST /api/notes API route.
-app.post("/api/notes", (req, res) => {
-  console.log(req.body) // **
-  res.end()
+app.post("/api/notes", (request, response) => {
+  if (request.body) {
+    // Read the db.json file.
+    const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
+    // Add the new note to the JSON.
+    notes.push(request.body)
+    // Save the new JSON to the db.json file.
+    fs.writeFileSync("./db/db.json", JSON.stringify(notes))
+
+
+    
+    // Return a success message.
+    response.json("You added your note -- congrats!") // **
+  } else {
+    // Return an error message.
+    response.error("Oops, something went wrong.") // **
+  }
 })
 
 // BONUS: Declare DELETE /api/notes/:id API route.
-app.delete("/api/notes/:id", (req, res) => {
+app.delete("/api/notes/:id", (request, response) => {
   console.log("DELETE /api/notes/:id API route") // **
-  res.end()
+  response.end()
 })
+
 
 // Listen at the specified port.
 app.listen(PORT, () =>
-  console.log(`Listening at http://localhost:${PORT}`)
+  console.log(`Available at http://localhost:${PORT}.`)
 )
