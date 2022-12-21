@@ -52,45 +52,42 @@ app.use(express.static("public"))
 
 
 // GET / HTML route (returns index.html).
-app.get("/", (request, response) => {
-  response.sendFile(path.join(__dirname, "/public/index.html"))
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
 // GET /notes HTML route (returns notes.html).
-app.get("/notes", (request, response) => {
-  response.sendFile(path.join(__dirname, "/public/notes.html"))
+app.get("/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/notes.html"))
 })
 
 
 // GET /api/notes API route (returns notes from db.json).
-app.get("/api/notes", (request, response) => {
-  response.json(db)
+app.get("/api/notes", (req, res) => {
+  res.json(db)
 })
 
 // Declare POST /api/notes API route.
-app.post("/api/notes", (request, response) => {
-  if (request.body) {
+app.post("/api/notes", (req, res) => {
+  if (req.body) {
     // Read the db.json file.
     const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
     // Add the new note to the JSON.
-    notes.push(request.body)
+    notes.push(req.body)
     // Save the new JSON to the db.json file.
     fs.writeFileSync("./db/db.json", JSON.stringify(notes))
-
-
-    
-    // Return a success message.
-    response.json("You added your note -- congrats!") // **
+    // 
+    res.redirect("/notes")
   } else {
     // Return an error message.
-    response.error("Oops, something went wrong.") // **
+    res.error("Oops, something went wrong.") // **
   }
 })
 
 // BONUS: Declare DELETE /api/notes/:id API route.
-app.delete("/api/notes/:id", (request, response) => {
+app.delete("/api/notes/:id", (req, res) => {
   console.log("DELETE /api/notes/:id API route") // **
-  response.end()
+  res.end()
 })
 
 
