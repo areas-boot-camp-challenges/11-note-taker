@@ -1,11 +1,11 @@
-// Declare elements.
+// Declare the elements.
 let notesList
 let noteTitle
 let noteText
 let saveNoteButton
 let newNoteButton
 
-// If on the /notes pages, define elements.
+// Save the elements (/notes page).
 if (window.location.pathname === "/notes") {
   notesList = document.querySelectorAll(".list-container .list-group")
   noteTitle = document.querySelector(".note-title")
@@ -14,69 +14,72 @@ if (window.location.pathname === "/notes") {
   newNoteButton = document.querySelector(".new-note")
 }
 
-// Call GET /api/notes (would be nice to rewrite as a function)
-const getAndDisplayNotesList = () =>
+// Call GET /api/notes and get the notes.
+const getAndDisplayNotes = () =>
   fetch("/api/notes", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   })
-  .then(displayNotesList)
+  .then(displayNotes)
 
-// Display the list of note titles.
-const displayNotesList = async (notes) => {
+// Display the notes.
+async function displayNotes(notes) {
+  // Save the notes from the GET /api/notes call.
   let jsonNotes = await notes.json()
+  // Clear the notes (/notes page).
   if (window.location.pathname === "/notes") {
-    notesList.forEach((el) => (el.innerHTML = ""))
+    notesList.forEach((element) => (element.innerHTML = ""))
   }
-
-  let noteListItems = []
-
-  // Returns HTML element with or without a delete button
-  const createLi = (text, delBtn = true) => {
-    const liEl = document.createElement("li")
-    liEl.classList.add("list-group-item")
-
-    const spanEl = document.createElement("span")
-    spanEl.classList.add("list-item-title")
-    spanEl.innerText = text
-    spanEl.addEventListener("click", handleNoteView)
-
-    liEl.append(spanEl)
-
-    if (delBtn) {
-      const delBtnEl = document.createElement("i")
-      delBtnEl.classList.add(
+  // Declare an empty notes array.
+  let notesListItems = []
+  // Create a note list item.
+  function createListItem(text, deleteButtonToggle = true) {
+    // Create an empty list item.
+    const listItem = document.createElement("li")
+    listItem.classList.add("list-group-item")
+    // Create a note title span and append it to the list item.
+    const span = document.createElement("span")
+    span.classList.add("list-item-title")
+    span.innerText = text
+    span.addEventListener("click", handleNoteView)
+    listItem.append(span)
+    // Create a delete button, add a listener, and append it to the list item.
+    if (deleteButtonToggle) {
+      const deleteButton = document.createElement("i")
+      deleteButton.classList.add(
         "fas",
         "fa-trash-alt",
         "float-right",
         "text-danger",
         "delete-note"
       )
-      delBtnEl.addEventListener("click", handleNoteDelete)
-
-      liEl.append(delBtnEl)
+      deleteButton.addEventListener("click", handleNoteDelete)
+      listItem.append(deleteButton)
     }
-
-    return liEl
+    // Return the list item.
+    return listItem
   }
-
+  // If there are no saved notes, add a message to the notes array.
   if (jsonNotes.length === 0) {
-    noteListItems.push(createLi("No saved Notes", false))
+    notesListItems.push(createListItem("There are no saved notes.", false))
   }
-
+  // For each note, create a list item and push it to the notes array.
   jsonNotes.forEach((note) => {
-    const li = createLi(note.title)
-    li.dataset.note = JSON.stringify(note)
-
-    noteListItems.push(li)
+    const listItem = createListItem(note.title)
+    listItem.dataset.note = JSON.stringify(note)
+    notesListItems.push(listItem)
   })
-
+  // Append each note from the array to the notes list.
   if (window.location.pathname === "/notes") {
-    noteListItems.forEach((note) => notesList[0].append(note))
+    notesListItems.forEach((note) => notesList[0].append(note))
   }
 }
+
+
+
+
 
 // If note title or text empty, hide save button. Else, show it.
 function hideOrShowSaveButton() {
@@ -112,7 +115,7 @@ function handleNoteSave() {
     text: noteText.value,
   }
   saveNote(newNote).then(() => {
-    getAndDisplayNotesList()
+    getAndDisplayNotes()
     renderActiveNote()
   })
 }
@@ -149,7 +152,7 @@ function handleNoteDelete(e) {
   }
 
   deleteNote(noteId).then(() => {
-    getAndDisplayNotesList()
+    getAndDisplayNotes()
     renderActiveNote()
   })
 }
@@ -175,4 +178,4 @@ if (window.location.pathname === "/notes") {
   newNoteButton.addEventListener("click", handleNewNoteView)
 }
 
-getAndDisplayNotesList()
+getAndDisplayNotes()
