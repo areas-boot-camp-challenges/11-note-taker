@@ -88,9 +88,9 @@ app.post("/api/notes", (req, res) => {
   }
 })
 
-// BONUS: Declare DELETE /api/notes/:id API route.
-app.delete("/api/notes/:id", (req, res) => {
-  console.log("DELETE /api/notes/:id API route") // **
+// BONUS: Declare DELETE /api/notes/:title API route.
+app.delete("/api/notes/:title", (req, res) => {
+  console.log("DELETE /api/notes/:title API route") // **
   res.end()
 })
 
