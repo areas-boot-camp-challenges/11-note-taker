@@ -31,6 +31,8 @@
 // You haven’t learned how to handle DELETE requests, but this application has that functionality in the front end. As a bonus, see if you can add the DELETE route to the application using the following guideline:
 // - DELETE /api/notes/:id should receive a query parameter containing the id of a note to delete. In order to delete a note, you'll need to read all notes from the db.json file, remove the note with the given id property, and then rewrite the notes to the db.json file.
 
+
+// Setup //
 // Import the Express.js, Path, and File System modules.
 const express = require("express")
 const path = require("path")
@@ -44,13 +46,15 @@ const PORT = process.env.PORT || 3333
 const db = require("./db/db.json")
 const { json } = require("express/lib/response")
 
-// Use this middleware to parse JSON.
+// Use this middleware to parse JSON and URL-encoded data.
 app.use(express.json())
+app.use(express.urlencoded({ extended: true })) // ** Do I need this?
 
 // Use this middleware to serve all static files in the public/ folder.
 app.use(express.static("public"))
 
 
+// HTML routes //
 // GET / HTML route (returns index.html).
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/public/index.html"))
@@ -61,7 +65,7 @@ app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "/public/notes.html"))
 })
 
-
+// API routes //
 // GET /api/notes API route (returns notes from db.json).
 app.get("/api/notes", (req, res) => {
   res.json(db)
@@ -91,6 +95,7 @@ app.delete("/api/notes/:id", (req, res) => {
 })
 
 
+// Listen
 // Listen at the specified port.
 app.listen(PORT, () =>
   console.log(`Available at http://localhost:${PORT}.`)
