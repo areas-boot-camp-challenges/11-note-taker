@@ -13,9 +13,9 @@
 //       THEN a Save icon appears in the navigation at the top of the page
 // - [ ] WHEN I click on the Save icon
 //       THEN the new note I have entered is saved and appears in the left-hand column with the other existing notes
-// - [ ] WHEN I click on an existing note in the list in the left-hand column
+// - [x] WHEN I click on an existing note in the list in the left-hand column
 //       THEN that note appears in the right-hand column
-// - [ ] WHEN I click on the Write icon in the navigation at the top of the page
+// - [x] WHEN I click on the Write icon in the navigation at the top of the page
 //       THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
 
 // The application should have a db.json file on the back end that will be used to store and retrieve notes using the fs module.
@@ -68,32 +68,54 @@ app.get("/notes", (req, res) => {
 // API routes //
 // GET /api/notes API route (returns notes from db.json).
 app.get("/api/notes", (req, res) => {
-  res.json(db)
+  res.status(200).json(db)
 })
 
-// Declare POST /api/notes API route.
+// POST /api/notes API route.
 app.post("/api/notes", (req, res) => {
-  if (req.body) {
+  // Deconstruct the request body.
+  const { title, text } = req.body
+  // Save the new note or return an error message.
+  if (title && text) {
     // Read the db.json file.
     const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
-    // Add the new note to the JSON.
-    notes.push(req.body)
+    // Use the request to create a new note object.
+    const newNote = {
+      title,
+      text,
+    }
+    // Push the new note to the notes object.
+    notes.push(newNote)
     // Save the new JSON to the db.json file.
     fs.writeFileSync("./db/db.json", JSON.stringify(notes))
-    // 
-    res.redirect("/notes")
+    // Return a success message.
+    res.status(201).json(newNote)
   } else {
     // Return an error message.
-    res.error("Oops, something went wrong.") // **
+    res.status(500).json("Oops, something went wrong.")
   }
 })
 
-// BONUS: Declare DELETE /api/notes/:title API route.
+// BONUS: DELETE /api/notes/:title API route.
 app.delete("/api/notes/:title", (req, res) => {
-  console.log("DELETE /api/notes/:title API route") // **
-  res.end()
+  // Save the note title.  
+  const noteTitle = req.params.title
+  // Delete the note or return an error message.
+  if (noteTitle) {
+    // Read the db.json file.
+    const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
+    // Delete the note from the notes object.
+    let index = notes.findIndex(note => note.title === noteTitle)
+    notes.splice(index, 1)
+    // Save the new JSON to the db.json file.
+    fs.writeFileSync("./db/db.json", JSON.stringify(notes))
+    // Return a success message.
+    res.status(204).send("Deleted!") // **
+  } else {
+    // Return an error message.
+    res.status(500).json("Oops, something went wrong.")
+  }
 })
-
 
 // Listen
 // Listen at the specified port.

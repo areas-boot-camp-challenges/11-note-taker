@@ -1,14 +1,1 @@
-[
-  {
-    "title": "Note A",
-    "text": "Lorem ipsum."
-  },
-  {
-    "title": "Note B",
-    "text": "Lorem ipsum."
-  },
-  {
-    "title": "Note C",
-    "text": "Lorem ipsum."
-  }
-]
+[{"title":"Note A","text":"Aye!"}]
