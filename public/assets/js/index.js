@@ -115,6 +115,11 @@ function prepareToSaveNote() {
   }
   // Pass the new note to saveNote() and call it.
   saveNote(newNote)
+  .then(() => {
+    getAndDisplayNotes()
+    displayActiveNote()
+  })
+
 }
 
 // Call POST /api/notes and save note.
@@ -125,10 +130,6 @@ const saveNote = (note) =>
       "Content-Type": "application/json",
     },
     body: JSON.stringify(note),
-  })
-  .then(() => {
-    getAndDisplayNotes()
-    displayActiveNote()
   })
 
 // Display an existing note.
@@ -157,6 +158,11 @@ function prepareToDeleteNote(event) {
   }
   // Pass the note title to deleteNote() and call it.
   deleteNote(noteTitle)
+  .then(() => {
+    getAndDisplayNotes()
+    displayActiveNote()
+  })
+
 }
 
 // Call DELETE /api/notes/:title and delete note.
@@ -166,10 +172,6 @@ const deleteNote = (noteTitle) =>
     headers: {
       "Content-Type": "application/json",
     },
-  })
-  .then(() => {
-    getAndDisplayNotes()
-    displayActiveNote()
   })
 
 // Add listeners to the buttons (/notes page).

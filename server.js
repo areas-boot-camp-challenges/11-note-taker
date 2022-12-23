@@ -74,7 +74,7 @@ app.delete("/api/notes/:title", (req, res) => {
     // Save the new JSON to the db.json file.
     fs.writeFileSync("./db/db.json", JSON.stringify(notes))
     // Return a success message.
-    res.status(204).send("Deleted!") // **
+    res.status(204).json("Deleted!") // **
   } else {
     // Return an error message.
     res.status(500).json("Oops, something went wrong.")
