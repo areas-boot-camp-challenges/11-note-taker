@@ -1,0 +1,16 @@
+{
+  "name": "note-taker",
+  "version": "0.1.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Christian Areas",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "nodemon": "^2.0.20",
+    "path": "^0.12.7"
+  }
+}
