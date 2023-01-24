@@ -5,9 +5,6 @@ const express = require("express")
 const path = require("path")
 const fs = require("fs")
 
-// Data.
-const db = require("./db/db.json")
-
 // App.
 const app = express()
 const PORT = process.env.PORT || 3333
@@ -36,7 +33,8 @@ app.get("/notes", (req, res) => {
 
 // GET /api/notes API route (getNotes).
 app.get("/api/notes", (req, res) => {
-	res.status(200).json(db)
+	const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"))
+	res.status(200).json(notes)
 })
 
 // POST /api/notes API route (addNote).
